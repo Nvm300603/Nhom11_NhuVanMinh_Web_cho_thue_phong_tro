@@ -20,13 +20,12 @@ class homeController {
 				}
                 
 			} else {
-                res.render('home/index')
+                res.render('home/index', { rooms: null, pagination: null});
 			}
 		} catch (error) {
 			console.error(error);
-            res.render('home/index')
+            res.render('home/index', { rooms: null, pagination: null});
 		}
-        res.render('home/index')
     }
 }
 module.exports = new homeController();

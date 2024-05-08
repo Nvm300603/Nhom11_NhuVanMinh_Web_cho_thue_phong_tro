@@ -12,7 +12,7 @@ router.put('/rooms/my_rooms/:id', authenticateJWT(), roomController.updateMyRoom
 router.delete('/rooms/my_rooms/:id', authenticateJWT(), roomController.deleteMyRoom);
 router.get('/rooms/:id', roomController.getRoom);
 router.get('/rooms/slug/:slug', roomController.getRoomBySlug);
-router.post('/rooms', roomController.createRoom);
+router.post('/rooms', authenticateJWT(), roomController.createRoom);
 router.put('/rooms/:id', authenticateJWT({ requiredRole: 'admin' }), roomController.updateRoom);
 router.delete('/rooms/:id', authenticateJWT({ requiredRole: 'admin' }), roomController.deleteRoom);
 
