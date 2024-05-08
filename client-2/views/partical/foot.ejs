@@ -1,0 +1,32 @@
+<footer class="bg-gray-900 text-gray-100 py-8">
+    <div class="container mx-auto text-center">
+        <p>&copy; 2024 Phòng Trọ Giá Rẻ. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    function getParamsExceptPage(page) {
+        const queryParams = new URLSearchParams(window.location.search);
+
+        const paramsObject = {};
+
+        for (const [key, value] of queryParams.entries()) {
+            if (key !== 'page') {
+                paramsObject[key] = value;
+            }
+        }
+
+        paramsObject['page'] = page;
+
+        return paramsObject;
+    }
+    function redirectToNewPage(page) {
+        const newParams = getParamsExceptPage(page);
+
+        const queryString = new URLSearchParams(newParams).toString();
+
+        const newUrl = window.location.pathname + '?' + queryString;
+
+        window.location.href = newUrl;
+    }
+</script>

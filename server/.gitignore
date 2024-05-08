@@ -1,0 +1,15 @@
+# .gitignore
+
+# Node.js
+node_modules/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Logs
+logs
+*.log
+
+# Environment variables
+.env

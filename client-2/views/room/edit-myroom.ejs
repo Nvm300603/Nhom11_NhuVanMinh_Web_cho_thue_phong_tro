@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partical/head'); %>
+    <script src="https://cdn.ckeditor.com/4.9.2/full/ckeditor.js"></script></head>
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Navbar -->
+    <%- include('../partical/navbar'); %>
+
+    <!-- Main Content -->
+    <div class="container mx-auto my-8 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Sidebar -->
+            <%- include('../partical/sidebar'); %>
+            <!-- Main Content -->
+            <div class="col-span-1 md:col-span-2">
+                
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold mb-4">Sửa tin cho thuê phòng trọ # <%= room.id %></h2>
+                    <!-- Form đăng tin -->
+                    <form id="roomForm" class="grid grid-cols-2 gap-4">
+                        <input type="hidden" id="id" value="<%= room.id %>">
+                        <div class="mb-4 col-span-2 grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="title" class="block text-gray-700 font-bold mb-2">Tiêu đề</label>
+                                <input type="text" id="title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required value="<%= room.title %>">
+                            </div>
+                            <div>
+                                <label for="price" class="block text-gray-700 font-bold mb-2">Giá (VND)</label>
+                                <input type="number" id="price" name="price" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required value="<%= room.price %>">
+                            </div>
+                            <div>
+                                <label for="area" class="block text-gray-700 font-bold mb-2">Diện tích (m2)</label>
+                                <input type="number" id="area" name="area" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required value="<%= room.area %>">
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-span-2 grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="province_code" class="block text-gray-700 font-bold mb-2">Tỉnh/Thành phố</label>
+                                <select id="province_code" name="province_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <!-- <option value="<%= room.province_code %>"><%= room.province_code %></option> -->
+                                    <!-- Các tùy chọn của select -->
+                                </select>
+                                <input type="hidden" id="province_code_hidden" value="<%= room.province_code %>">
+                            </div>
+                            <div>
+                                <label for="district_code" class="block text-gray-700 font-bold mb-2">Quận/Huyện</label>
+                                <select id="district_code" name="district_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <!-- <option value="<%= room.district_code %>"><%= room.district_code %></option> -->
+                                    <!-- Các tùy chọn của select -->
+                                </select>
+                                <input type="hidden" id="district_code_hidden" value="<%= room.district_code %>">
+                            </div>
+                            <div>
+                                <label for="ward_code" class="block text-gray-700 font-bold mb-2">Phường/Xã</label>
+                                <select id="ward_code" name="ward_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <!-- <option value="<%= room.ward_code %>"><%= room.ward_code %></option> -->
+                                    <!-- Các tùy chọn của select -->
+                                </select>
+                                <input type="hidden" id="ward_code_hidden" value="<%= room.ward_code %>">
+                            </div>
+                        </div>
+
+                        <div class="mb-4 col-span-2">
+                            <label for="address" class="block text-gray-700 font-bold mb-2">Địa chỉ</label>
+                            <input type="text" id="address" name="address" placeholder="Số nhà" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required value="<%= room.address %>">
+                        </div>
+
+                        <div class="mb-4 col-span-2">
+                            <label for="description" class="block text-gray-700 font-bold mb-2">Mô tả:</label>
+                            <textarea id="description" name="description" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" rows="4" required><%= room.description %></textarea>
+                        </div>
+
+                        <script type="text/javascript">
+                            CKEDITOR.replace( 'description' );
+                        </script>
+
+                        <div class="mb-4 col-span-2 relative">
+                            <label for="image" class="block text-gray-700 font-bold mb-2">Ảnh</label>
+                            <div class="flex items-center">
+                                <input type="text" id="image" name="image" placeholder="" class="form-input flex-1 w-full mr-3 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500" required value="<%= room.image %>">
+                                <button type="button" id="selectFileButton" class="h-full px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Chọn file</button>
+                                <input type="file" class="form-control-file hidden" id="image_file" name="image_file">
+                            </div>
+                            <img id="previewImg" class="img-fluid" alt="" style="width:30%;" src="<%= room.image %>">
+                        </div>
+
+                        <!-- Nút đăng tin -->
+                        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4" role="alert">
+                            <p class="font-bold">Chú ý</p>
+                            <p>Nếu bạn cập nhật lại tin, bạn phải chờ admin duyệt lại.</p>
+                        </div>
+                        <div class="col-span-2">
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Cập nhật tin</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Tỉnh thành phố
+        function fetchProvinces() {
+            fetch('http://localhost:3000/api/provinces')
+                .then(response => response.json())
+                .then(data => {
+                    const provinceDropdown = document.getElementById('province_code');
+                    provinceDropdown.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+                    
+                    data.data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.code;
+                        option.textContent = province.name;
+                        provinceDropdown.appendChild(option);
+                    });
+                    
+                    // Lấy giá trị và cập nhật lại cho thẻ select
+                    const provinceCode = document.getElementById('province_code_hidden').value;
+                    const districtCode = document.getElementById('district_code_hidden').value;
+                    const wardCode = document.getElementById('ward_code_hidden').value;
+                    const selectedProvince = provinceDropdown.querySelector(`option[value="${provinceCode}"]`);
+                    if (selectedProvince) {
+                        selectedProvince.selected = true;
+                        const event = new Event('change', {
+                            bubbles: true,
+                            cancelable: true,
+                        });
+                        // Kích hoạt sự kiện change trên provinceDropdown
+                        provinceDropdown.dispatchEvent(event);
+                    }
+
+                })
+                .catch(error => console.error('Error fetching provinces:', error));
+        }
+
+        window.addEventListener('load', fetchProvinces);
+
+        document.getElementById('province_code').addEventListener('change', function() {
+            const selectedProvinceCode = this.value;
+            if (selectedProvinceCode) {
+                fetch(`http://localhost:3000/api/provinces/${selectedProvinceCode}/districts`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const districtDropdown = document.getElementById('district_code');
+                        districtDropdown.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                        data.data.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.code;
+                            option.textContent = district.name;
+                            districtDropdown.appendChild(option);
+                        });
+
+                        const districtCode = document.getElementById('district_code_hidden').value;
+                        const selectedDistrict = districtDropdown.querySelector(`option[value="${districtCode}"]`);
+                        if (selectedDistrict) {
+                            selectedDistrict.selected = true;
+                            const event = new Event('change', {
+                                bubbles: true,
+                                cancelable: true,
+                            });
+                            // Kích hoạt sự kiện change trên districtDropdown
+                            districtDropdown.dispatchEvent(event);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            } else {
+                document.getElementById('district_code').innerHTML = '<option value="">Chọn quận/huyện</option>';
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        document.getElementById('district_code').addEventListener('change', function() {
+            const selectedDistrictCode = this.value;
+            if (selectedDistrictCode) {
+                fetch(`http://localhost:3000/api/districts/${selectedDistrictCode}/wards`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const wardDropdown = document.getElementById('ward_code');
+                        wardDropdown.innerHTML = '<option value="">Chọn phường/xã</option>';
+                        data.data.forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward.code;
+                            option.textContent = ward.name;
+                            wardDropdown.appendChild(option);
+                        });
+
+                        const wardCode = document.getElementById('ward_code_hidden').value;
+                        const selectedWard = wardDropdown.querySelector(`option[value="${wardCode}"]`);
+                        if (selectedWard) {
+                            selectedWard.selected = true;
+                        }
+                    })
+                    .catch(error => console.error('Error fetching wards:', error));
+            } else {
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        // Upload Ảnh
+        function uploadImage(id) {
+            const generateId = generateRandomString(11);
+            let images = $('#image_file_'+id+'').prop('files');
+
+            for(let i = 0; i < images.length; i++) {
+                let image = images[i];
+                let formData = new FormData();
+                formData.append('image', image);
+
+                $.ajax({
+                    url: '/admin/images/upload/',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if(data.path && i == 0){
+                            $('#image_'+id+'').val(data.path);
+                            $('#previewImg_'+id+'').attr('src', data.path);
+                            $('#previewImg_'+id+'').show();
+                        }
+                        if(data.path && i > 0) {
+                            const newRow = `
+                                <tr>
+                                    <td>
+                                        <div class="input-group mb-3">
+                                            <input required type="text" class="form-control" id="image_${generateId}" name="images[]" value="${data.path}">
+                                            <div class="input-group-append">
+                                                <label class="input-group-text btn btn-primary" for="image_file_${generateId}">Chọn file</label>
+                                                <input type="file" class="form-control-file d-none" id="image_file_${generateId}" onchange="uploadImage('${generateId}')" multiple>
+                                            </div>
+                                        </div>
+                                        <img id="previewImg_${generateId}" class="img-fluid" alt="" style="width:100px;" src="${data.path}">
+                                    </td>
+                                    <td><button type="button" class="btn btn-danger" onclick="deleteVariantRow(this)">Xóa</button></td>
+                                </tr>
+                            `;
+                            $('#imagesTable tbody').append(newRow);
+                        }
+                    }
+                });
+            }
+        }
+
+        $('#selectFileButton').on('click', function() {
+            $('#image_file').click();
+        });
+
+        $('#image_file').on('change', function() {
+            let image = $('#image_file').prop('files')[0];
+            let formData = new FormData();
+            formData.append('image', image);
+
+            $.ajax({
+                url: 'http://localhost:3000/api/images/upload',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if(data.path){
+                        $('#image').val(data.path);
+                        $('#previewImg').attr('src', data.path);
+                        $('#previewImg').show();
+                    }else{
+                        $('#image').val('');
+                        $('#previewImg').attr('src', '');
+                        $('#previewImg').hide();
+                    }
+
+                }
+            });
+        });
+
+        document.getElementById('roomForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+
+            // update ckeditor data
+            for(var instanceName in CKEDITOR.instances)
+                CKEDITOR.instances[instanceName].updateElement();
+
+            // Lấy dữ liệu từ form
+            const formData = new FormData(this);
+            const id = document.getElementById('id').value;
+            const title = document.getElementById('title').value;
+            const address = document.getElementById('address').value;
+            const description = document.getElementById('description').value;
+            const image = document.getElementById('image').value;
+            const price = document.getElementById('price').value;
+            const area = document.getElementById('area').value;
+            const province_code = document.getElementById('province_code').value;
+            const district_code = document.getElementById('district_code').value;
+            const ward_code = document.getElementById('ward_code').value;
+
+            // Gửi dữ liệu đến API
+            fetch('/rooms/'+id+'', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+					title: title,
+					address: address,
+					description: description,
+					image: image,
+					price: price,
+					area: area,
+					province_code: province_code,
+					district_code: district_code,
+					ward_code: ward_code
+				}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Room updated:', data);
+                toastr.success(data.message);
+                window.location.href = "/my_rooms";
+            })
+            .catch(error => {
+                console.error('Error updating room:', error);
+                toastr.success(error.message);
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partical/head'); %>
+    <script src="https://cdn.ckeditor.com/4.9.2/full/ckeditor.js"></script></head>
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Navbar -->
+    <%- include('../partical/navbar'); %>
+
+    <!-- Main Content -->
+    <div class="container mx-auto my-8 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Sidebar -->
+            <%- include('../partical/sidebar'); %>
+            <!-- Main Content -->
+            <div class="col-span-1 md:col-span-2">
+                
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-bold mb-4">Đăng tin cho thuê phòng trọ</h2>
+                    <!-- Form đăng tin -->
+                    <form id="roomForm" class="grid grid-cols-2 gap-4">
+                        <div class="mb-4 col-span-2 grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="title" class="block text-gray-700 font-bold mb-2">Tiêu đề</label>
+                                <input type="text" id="title" name="title" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="price" class="block text-gray-700 font-bold mb-2">Giá (VND)</label>
+                                <input type="number" id="price" name="price" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required>
+                            </div>
+                            <div>
+                                <label for="area" class="block text-gray-700 font-bold mb-2">Diện tích (m2)</label>
+                                <input type="number" id="area" name="area" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required>
+                            </div>
+                        </div>
+                        <div class="mb-4 col-span-2 grid grid-cols-3 gap-4">
+                            <div>
+                                <label for="province_code" class="block text-gray-700 font-bold mb-2">Tỉnh/Thành phố</label>
+                                <select id="province_code" name="province_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <option value="">Chọn tỉnh/thành phố</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="district_code" class="block text-gray-700 font-bold mb-2">Quận/Huyện</label>
+                                <select id="district_code" name="district_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <option value="">Chọn quận/huyện</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="ward_code" class="block text-gray-700 font-bold mb-2">Phường/Xã</label>
+                                <select id="ward_code" name="ward_code" class="mt-1 block w-full p-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500">
+                                    <option value="">Chọn phường/xã</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-4 col-span-2">
+                            <label for="address" class="block text-gray-700 font-bold mb-2">Địa chỉ</label>
+                            <input type="text" id="address" name="address" placeholder="Số nhà" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" required>
+                        </div>
+                        <div class="mb-4 col-span-2">
+                            <label for="description" class="block text-gray-700 font-bold mb-2">Mô tả:</label>
+                            <textarea id="description" name="description" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500" rows="4" required></textarea>
+                        </div>
+                        <script type="text/javascript">
+                            CKEDITOR.replace( 'description' );
+                        </script>
+                        <div class="mb-4 col-span-2 relative">
+                            <label for="image" class="block text-gray-700 font-bold mb-2">Ảnh</label>
+                            <div class="flex items-center">
+                                <input type="text" id="image" name="image" placeholder="" class="form-input flex-1 w-full mr-3 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500" required>
+                                <button type="button" id="selectFileButton" class="h-full px-3 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Chọn file</button>
+                                <input type="file" class="form-control-file hidden" id="image_file" name="image_file">
+                            </div>
+                            <img id="previewImg" class="img-fluid" alt="" style="width:30%;display:none;" src="">
+                        </div>
+                        <div class="col-span-2">
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Đăng tin</button>
+                        </div>
+                    
+                    </form>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    <script>
+        // Tỉnh thành phố
+        function fetchProvinces() {
+            fetch('http://localhost:3000/api/provinces')
+                .then(response => response.json())
+                .then(data => {
+                    const provinceDropdown = document.getElementById('province_code');
+                    provinceDropdown.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+                    data.data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.code;
+                        option.textContent = province.name;
+                        provinceDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching provinces:', error));
+        }
+
+        window.addEventListener('load', fetchProvinces);
+
+        document.getElementById('province_code').addEventListener('change', function() {
+            const selectedProvinceCode = this.value;
+            if (selectedProvinceCode) {
+                fetch(`http://localhost:3000/api/provinces/${selectedProvinceCode}/districts`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const districtDropdown = document.getElementById('district_code');
+                        districtDropdown.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                        data.data.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.code;
+                            option.textContent = district.name;
+                            districtDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            } else {
+                document.getElementById('district_code').innerHTML = '<option value="">Chọn quận/huyện</option>';
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        document.getElementById('district_code').addEventListener('change', function() {
+            const selectedDistrictCode = this.value;
+            if (selectedDistrictCode) {
+                fetch(`http://localhost:3000/api/districts/${selectedDistrictCode}/wards`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const wardDropdown = document.getElementById('ward_code');
+                        wardDropdown.innerHTML = '<option value="">Chọn phường/xã</option>';
+                        data.data.forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward.code;
+                            option.textContent = ward.name;
+                            wardDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching wards:', error));
+            } else {
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        // Upload Ảnh
+        function uploadImage(id) {
+            const generateId = generateRandomString(11);
+            let images = $('#image_file_'+id+'').prop('files');
+
+            for(let i = 0; i < images.length; i++) {
+                let image = images[i];
+                let formData = new FormData();
+                formData.append('image', image);
+
+                $.ajax({
+                    url: '/admin/images/upload/',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if(data.path && i == 0){
+                            $('#image_'+id+'').val(data.path);
+                            $('#previewImg_'+id+'').attr('src', data.path);
+                            $('#previewImg_'+id+'').show();
+                        }
+                        if(data.path && i > 0) {
+                            const newRow = `
+                                <tr>
+                                    <td>
+                                        <div class="input-group mb-3">
+                                            <input required type="text" class="form-control" id="image_${generateId}" name="images[]" value="${data.path}">
+                                            <div class="input-group-append">
+                                                <label class="input-group-text btn btn-primary" for="image_file_${generateId}">Chọn file</label>
+                                                <input type="file" class="form-control-file d-none" id="image_file_${generateId}" onchange="uploadImage('${generateId}')" multiple>
+                                            </div>
+                                        </div>
+                                        <img id="previewImg_${generateId}" class="img-fluid" alt="" style="width:100px;" src="${data.path}">
+                                    </td>
+                                    <td><button type="button" class="btn btn-danger" onclick="deleteVariantRow(this)">Xóa</button></td>
+                                </tr>
+                            `;
+                            $('#imagesTable tbody').append(newRow);
+                        }
+                    }
+                });
+            }
+        }
+
+        $('#selectFileButton').on('click', function() {
+            $('#image_file').click();
+        });
+
+        $('#image_file').on('change', function() {
+            let image = $('#image_file').prop('files')[0];
+            let formData = new FormData();
+            formData.append('image', image);
+
+            $.ajax({
+                url: 'http://localhost:3000/api/images/upload',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if(data.path){
+                        $('#image').val(data.path);
+                        $('#previewImg').attr('src', data.path);
+                        $('#previewImg').show();
+                    }else{
+                        $('#image').val('');
+                        $('#previewImg').attr('src', '');
+                        $('#previewImg').hide();
+                    }
+
+                }
+            });
+        });
+
+        document.getElementById('roomForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+
+            // Lấy dữ liệu từ form
+            const formData = new FormData(this);
+            const title = document.getElementById('title').value;
+            const address = document.getElementById('address').value;
+            const description = document.getElementById('description').value;
+            const image = document.getElementById('image').value;
+            const price = document.getElementById('price').value;
+            const area = document.getElementById('area').value;
+            const province_code = document.getElementById('province_code').value;
+            const district_code = document.getElementById('district_code').value;
+            const ward_code = document.getElementById('ward_code').value;
+
+            // Gửi dữ liệu đến API
+            fetch('/rooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+					title: title,
+					address: address,
+					description: description,
+					image: image,
+					price: price,
+					area: area,
+					province_code: province_code,
+					district_code: district_code,
+					ward_code: ward_code
+				}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Room created:', data);
+                toastr.success(data.message);
+                window.location.href = "/my_rooms";
+            })
+            .catch(error => {
+                console.error('Error creating room:', error);
+                toastr.success(error.message);
+            });
+        });
+    </script>
+
+</body>
+
+</html>

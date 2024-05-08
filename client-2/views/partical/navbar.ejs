@@ -1,0 +1,17 @@
+<header class="bg-white border-b border-gray-400 py-4">
+    <div class="container mx-auto flex justify-between items-center px-4">
+        <div class="w-32">
+            <a href="/" class="text-xl font-bold text-blue-500">PhongTroGiaRe</a>
+        </div>
+        <nav>
+            <ul class="flex space-x-4">
+                <% if (loggedIn) { %>
+                <li><a href="/my_rooms/create" class="text-red-700 hover:text-blue-500">ĐĂNG TIN</a></li>
+                <li><a href="/logout" class="text-gray-700 hover:text-red-500">Đăng xuất</a></li>
+                <% } else { %>
+                <li><a href="/login" class="text-gray-700 hover:text-blue-500">Đăng nhập</a></li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('../partical/head'); %>
+    <script src="https://cdn.ckeditor.com/4.9.2/full/ckeditor.js"></script></head>
+</head>
+
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Navbar -->
+    <%- include('../partical/navbar'); %>
+
+    <!-- Main Content -->
+    <div class="container mx-auto my-8 px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Sidebar -->
+            <%- include('../partical/sidebar'); %>
+            <!-- Main Content -->
+            <div class="col-span-1 md:col-span-2">
+
+                <div class="bg-white p-8 mt-4 rounded-lg shadow-md mb-8 overflow-x-auto">
+                    <h2 class="text-2xl font-bold mb-4">Danh sách phòng trọ đã đăng</h2>
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th class="px-4 py-2">Hành động</th>
+                                <th class="px-4 py-2">Tiêu đề</th>
+                                <th class="px-4 py-2">Địa chỉ</th>
+                                <th class="px-4 py-2">Giá</th>
+                                <th class="px-4 py-2">Diện tích</th>
+                                <th class="px-4 py-2">Ngày đăng</th>
+                                <th class="px-4 py-2">Tình trạng đăng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% rooms.forEach(room => { %>
+                                <tr>
+                                    <td class="px-4 py-2 text-center">
+                                        <div class="flex justify-center">
+                                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2" onclick="publishRoom('<%= room.id %>')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M9.707 3.293a1 1 0 0 1 1.414 0l5 5a1 1 0 0 1 0 1.414l-10 10a1 1 0 0 1-.32.227l-5.5 1.833a1 1 0 0 1-1.25-1.249l1.833-5.5a1 1 0 0 1 .227-.32l10-10z" clip-rule="evenodd"></path>
+                                                    <path fill-rule="evenodd" d="M12.121 5.879a1 1 0 0 1 0 1.414l-8 8a1 1 0 1 1-1.414-1.414l8-8a1 1 0 0 1 1.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                                Xuất bản
+                                            </button>
+                                            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded" onclick="publishRoomCancel('<%= room.id %>')">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M6 8a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8zm2-2a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1H8V6zm7 2a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0V6z"></path>
+                                                </svg>
+                                                Từ chối
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-2"><%= room.title %></td>
+                                    <td class="px-4 py-2"><%= room.full_address %></td>
+                                    <td class="px-4 py-2"><%= Number(room.price).toLocaleString('vi-VN') %> VND</td>
+                                    <td class="px-4 py-2"><%= Number(room.area).toLocaleString('vi-VN') %>m<sup>2</sup></td>
+                                    <td class="px-4 py-2"><%= new Date(room.created_at).toLocaleDateString('vi-VN') %></td>
+                                    <td class="px-4 py-2">
+                                        <% if (room.is_published) { %>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Đã đăng</span>
+                                            <a href="/rooms/<%= room.slug %>" target="_blank" class="ml-2 text-blue-500 hover:text-blue-800">Xem</a>
+                                        <% } else { %>
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Chờ duyệt</span>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                    <nav class="flex justify-center mt-8">
+                        <ul class="flex space-x-4">
+                            <% if (pagination.totalPages > 1) { %>
+                                <% if (pagination.page > 1) { %>
+                                    <li><a href="#" onclick="redirectToNewPage(<%= pagination.page - 1 %>)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Previous</a></li>
+                                <% } else { %>
+                                    <li><span class="px-4 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">Previous</span></li>
+                                <% } %>
+                                
+                                <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                                    <li><a href="#" onclick="redirectToNewPage(<%= i %>)" class="px-4 py-2 bg-white text-gray-700 rounded-md hover:bg-gray-200 <%= i === pagination.page ? 'font-bold' : '' %>"><%= i %></a></li>
+                                <% } %>
+                                
+                                <% if (pagination.page < pagination.totalPages) { %>
+                                    <li><a href="#" onclick="redirectToNewPage(<%= pagination.page + 1 %>)" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">Next</a></li>
+                                <% } else { %>
+                                    <li><span class="px-4 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">Next</span></li>
+                                <% } %>
+                            <% } else { %>
+                                <li><span class="px-4 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">Previous</span></li>
+                                <li><a href="#" onclick="redirectToNewPage(1)" class="px-4 py-2 bg-white text-gray-700 rounded-md hover:bg-gray-200 font-bold">1</a></li>
+                                <li><span class="px-4 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">Next</span></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../partical/foot'); %>
+    <script>
+        // Tỉnh thành phố
+        function fetchProvinces() {
+            fetch('http://localhost:3000/api/provinces')
+                .then(response => response.json())
+                .then(data => {
+                    const provinceDropdown = document.getElementById('province_code');
+                    provinceDropdown.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+                    data.data.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province.code;
+                        option.textContent = province.name;
+                        provinceDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching provinces:', error));
+        }
+
+        window.addEventListener('load', fetchProvinces);
+
+        document.getElementById('province_code').addEventListener('change', function() {
+            const selectedProvinceCode = this.value;
+            if (selectedProvinceCode) {
+                fetch(`http://localhost:3000/api/provinces/${selectedProvinceCode}/districts`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const districtDropdown = document.getElementById('district_code');
+                        districtDropdown.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                        data.data.forEach(district => {
+                            const option = document.createElement('option');
+                            option.value = district.code;
+                            option.textContent = district.name;
+                            districtDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching districts:', error));
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            } else {
+                document.getElementById('district_code').innerHTML = '<option value="">Chọn quận/huyện</option>';
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        document.getElementById('district_code').addEventListener('change', function() {
+            const selectedDistrictCode = this.value;
+            if (selectedDistrictCode) {
+                fetch(`http://localhost:3000/api/districts/${selectedDistrictCode}/wards`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const wardDropdown = document.getElementById('ward_code');
+                        wardDropdown.innerHTML = '<option value="">Chọn phường/xã</option>';
+                        data.data.forEach(ward => {
+                            const option = document.createElement('option');
+                            option.value = ward.code;
+                            option.textContent = ward.name;
+                            wardDropdown.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching wards:', error));
+            } else {
+                document.getElementById('ward_code').innerHTML = '<option value="">Chọn phường/xã</option>';
+            }
+        });
+
+        // Upload Ảnh
+        function uploadImage(id) {
+            const generateId = generateRandomString(11);
+            let images = $('#image_file_'+id+'').prop('files');
+
+            for(let i = 0; i < images.length; i++) {
+                let image = images[i];
+                let formData = new FormData();
+                formData.append('image', image);
+
+                $.ajax({
+                    url: '/admin/images/upload/',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        if(data.path && i == 0){
+                            $('#image_'+id+'').val(data.path);
+                            $('#previewImg_'+id+'').attr('src', data.path);
+                            $('#previewImg_'+id+'').show();
+                        }
+                        if(data.path && i > 0) {
+                            const newRow = `
+                                <tr>
+                                    <td>
+                                        <div class="input-group mb-3">
+                                            <input required type="text" class="form-control" id="image_${generateId}" name="images[]" value="${data.path}">
+                                            <div class="input-group-append">
+                                                <label class="input-group-text btn btn-primary" for="image_file_${generateId}">Chọn file</label>
+                                                <input type="file" class="form-control-file d-none" id="image_file_${generateId}" onchange="uploadImage('${generateId}')" multiple>
+                                            </div>
+                                        </div>
+                                        <img id="previewImg_${generateId}" class="img-fluid" alt="" style="width:100px;" src="${data.path}">
+                                    </td>
+                                    <td><button type="button" class="btn btn-danger" onclick="deleteVariantRow(this)">Xóa</button></td>
+                                </tr>
+                            `;
+                            $('#imagesTable tbody').append(newRow);
+                        }
+                    }
+                });
+            }
+        }
+
+        $('#selectFileButton').on('click', function() {
+            $('#image_file').click();
+        });
+
+        $('#image_file').on('change', function() {
+            let image = $('#image_file').prop('files')[0];
+            let formData = new FormData();
+            formData.append('image', image);
+
+            $.ajax({
+                url: 'http://localhost:3000/api/images/upload',
+                method: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if(data.path){
+                        $('#image').val(data.path);
+                        $('#previewImg').attr('src', data.path);
+                        $('#previewImg').show();
+                    }else{
+                        $('#image').val('');
+                        $('#previewImg').attr('src', '');
+                        $('#previewImg').hide();
+                    }
+
+                }
+            });
+        });
+
+        document.getElementById('roomForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của nút submit
+
+            // Lấy dữ liệu từ form
+            const formData = new FormData(this);
+            const title = document.getElementById('title').value;
+            const address = document.getElementById('address').value;
+            const description = document.getElementById('description').value;
+            const image = document.getElementById('image').value;
+            const price = document.getElementById('price').value;
+            const area = document.getElementById('area').value;
+            const province_code = document.getElementById('province_code').value;
+            const district_code = document.getElementById('district_code').value;
+            const ward_code = document.getElementById('ward_code').value;
+
+            // Gửi dữ liệu đến API
+            fetch('/rooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+					title: title,
+					address: address,
+					description: description,
+					image: image,
+					price: price,
+					area: area,
+					province_code: province_code,
+					district_code: district_code,
+					ward_code: ward_code
+				}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Room created:', data);
+                toastr.success(data.message);
+                window.location.href = "/my_rooms";
+            })
+            .catch(error => {
+                console.error('Error creating room:', error);
+                toastr.success(error.message);
+            });
+        });
+
+        async function deleteRoom(roomId) {
+            try {
+                const confirmed = window.confirm("Bạn có chắc chắn muốn xoá không?");
+                if (!confirmed) {
+                    return;
+                }
+                const url = `/my_rooms/${roomId}`;
+                const response = await fetch(url, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (response.status == 200) {
+                    toastr.success("Xóa thành công");
+                    setTimeout(() => {
+                        window.location.href="/my_rooms";
+                    }, 1000);
+                } else {
+                    toastr.error(response.message);
+                }
+            } catch (error) {
+                console.error(error);
+                toastr.error(error.message);
+            }
+        }
+
+        function editRoom(roomId) {
+            window.location.href = `/my_rooms/edit/${roomId}`;
+        }
+
+        function publishRoomCancel(roomId) {
+            fetch(`/admin/rooms/${roomId}/publish`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+					is_published: 0
+				}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to published room');
+                }
+                toastr.success('Từ chối xuất bản thành công');
+                window.location.href = "/admin/rooms";
+            })
+            .catch(error => {
+                toastr.error(error.message);
+                console.error('Error publishing room:', error);
+            });
+        }
+
+        function publishRoom(roomId) {
+            fetch(`/admin/rooms/${roomId}/publish`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+					is_published: 1
+				}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to published room');
+                }
+                toastr.success('Xuất bản thành công');
+                window.location.href = "/admin/rooms";
+            })
+            .catch(error => {
+                toastr.error(error.message);
+                console.error('Error publishing room:', error);
+            });
+        }
+
+    </script>
+
+</body>
+
+</html>
